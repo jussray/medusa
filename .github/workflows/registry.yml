@@ -39,3 +39,6 @@ jobs:
               assert actual == a["git_blob"], "archive blob mismatch: " + a["path"]
           print(f"Registry metadata, skill blob and {len(archives)} archive blobs verified; no archive extracted or skill executed.")
           PY
+      - name: Test synthetic Layer 4 model (no operational effects)
+        working-directory: lab
+        run: python3 -m unittest -v test_actuator_lab
