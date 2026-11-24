@@ -1,3 +1,4 @@
+import {auth,googleConfigured} from './auth.mjs';
 import {workspace} from './workspace.mjs';
 const headers={'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','x-frame-options':'DENY','permissions-policy':'camera=(), microphone=(), geolocation=()'};
 const json=(value,status=200)=>Response.json(value,{status,headers});
@@ -22,9 +23,10 @@ async function integrity(request,save=false){
 const pages=new Map([['/','home'],['/brand','home'],['/overview','method'],['/evidence','review'],['/threats','threats'],['/audit','audit'],['/workspace','workspace'],['/auth/sign-in','signin'],['/auth/sign-up','signup']]);
 export default {async fetch(request,env){
  const url=new URL(request.url),path=url.pathname;
+ if(['/auth/google/start','/auth/google/callback','/auth/customer/logout'].includes(path))return auth(request,env);
  if(path==='/api/integrity')return integrity(request);
  if(path==='/api/workspace'||path==='/api/workspace/receipts')return workspace(request,env,integrity);
- if(path==='/api/status'&&request.method==='GET')return json({integrity:true,customerAuth:false,aiRuntime:false,operationalActions:false});
+ if(path==='/api/status'&&request.method==='GET')return json({integrity:true,customerAuth:false,googleConfigured:googleConfigured(url,env),aiRuntime:false,operationalActions:false});
  if(!['GET','HEAD'].includes(request.method))return json({error:'METHOD_NOT_ALLOWED'},405);
  if(pages.has(path)&&pages.get(path)!=='home')return new Response(null,{status:302,headers:{...headers,location:'/brand#'+pages.get(path)}});
  if(!pages.has(path)&&path!=='/index.html'&&path!=='/app.js')return json({error:'NOT_FOUND'},404);

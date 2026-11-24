@@ -49,3 +49,13 @@
  }catch{result.textContent='Save not confirmed.'}finally{busy=false;consent.checked=false;sync()}});
  load();
 })();
+;(async()=>{
+ try{const r=await fetch('/api/status',{cache:'no-store'});if(!r.ok||!(await r.json()).googleConfigured)return}catch{return}
+ for(const id of ['signin','signup']){
+  const section=document.getElementById(id);if(!section)continue;
+  const link=document.createElement('a');link.href='/auth/google/start';link.className='btn primary';link.textContent='Continue with Google';section.append(link);
+ }
+ const section=document.getElementById('workspace');if(!section)return;
+ const button=document.createElement('button');button.type='button';button.className='btn';button.textContent='Sign out';section.append(button);
+ button.addEventListener('click',async()=>{try{const r=await fetch('/auth/customer/logout',{method:'POST',credentials:'same-origin'});if(!r.ok)throw Error();location.assign('/brand#signin');location.reload()}catch{button.textContent='Sign out not confirmed'}});
+})();
