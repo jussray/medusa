@@ -48,3 +48,7 @@ jobs:
       - name: Test advisory identity and provider adapter (mock responses only)
         working-directory: runtime
         run: node --test runtime.test.mjs lane.test.mjs
+
+      - name: Build exact Living Scene canon and test public review service
+        working-directory: web
+        run: node build.mjs && node --check app.js && node --test worker.test.mjs
