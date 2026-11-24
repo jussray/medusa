@@ -43,4 +43,4 @@ jobs:
         run: python3 -m pip install --disable-pip-version-check cryptography==46.0.4
       - name: Test synthetic Layer 4 model (no operational effects)
         working-directory: lab
-        run: python3 -W error::ResourceWarning -m unittest -v test_actuator_lab test_actuator_concurrency test_journal_lab test_evidence_lab
+        run: python3 -W error::ResourceWarning -m unittest -v test_actuator_lab test_actuator_concurrency test_journal_lab test_evidence_lab test_boundary_lab

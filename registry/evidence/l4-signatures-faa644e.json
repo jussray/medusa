@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "repository": "jussray/medusa",
+  "verified_commit": "faa644e1f2f2282f1d75b948a2b204ff03f89e60",
+  "observed_on": "2026-11-24",
+  "source": "GitHub Actions job logs and exact-head check",
+  "evidence_url": "https://github.com/jussray/medusa/actions/runs/45351554529/job/138298976505",
+  "conclusion": "success",
+  "tests": {
+    "passed": 23,
+    "failed": 0
+  },
+  "archives_verified": 5,
+  "tested_blobs": {
+    "lab/actuator_lab.py": "8dc709335a5edaa06c6761f2491385111e6c3521",
+    "lab/evidence_lab.py": "6b19648428d6b32bfe52b283fd440e9f81601fde",
+    "lab/journal_lab.py": "6b0fbe3a300166f47be5a105fae21792c9415596",
+    "lab/test_actuator_concurrency.py": "f6ac52098cd4e88525e323c42f34d59461a20f14",
+    "lab/test_actuator_lab.py": "1a621a1c4bcd79ab5132733a650a93b9bb0ce7be",
+    "lab/test_evidence_lab.py": "c7dce4dd469278fea83fcc3d683016496e2e1288",
+    "lab/test_journal_lab.py": "a89d53658f33f364ff4fb77e79f4034a943ea3ba"
+  },
+  "scope": "Synthetic metadata and signature review; no operational signer enrollment or filesystem containment",
+  "execution_authorization": "none"
+}

@@ -57,5 +57,12 @@
     "status": "passed",
     "scope": "synthetic-only",
     "execution_enabled": false
+  },
+  "synthetic_signature_evidence": {
+    "receipt_path": "registry/evidence/l4-signatures-faa644e.json",
+    "verified_commit": "faa644e1f2f2282f1d75b948a2b204ff03f89e60",
+    "status": "passed",
+    "scope": "synthetic-only",
+    "execution_enabled": false
   }
 }
