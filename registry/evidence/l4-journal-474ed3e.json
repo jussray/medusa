@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "repository": "jussray/medusa",
+  "verified_commit": "474ed3eb10d03c1b938048e579ef449eafd4bbb9",
+  "source": "GitHub Actions job logs and exact-head check",
+  "observed_on": "2026-11-24",
+  "evidence_url": "https://github.com/jussray/medusa/actions/runs/45337375003/job/138252530726",
+  "run_id": 45337375003,
+  "job_id": 138252530726,
+  "conclusion": "success",
+  "tests": {
+    "passed": 15,
+    "failed": 0
+  },
+  "archives_verified": 5,
+  "tested_blobs": {
+    "lab/actuator_lab.py": "8dc709335a5edaa06c6761f2491385111e6c3521",
+    "lab/journal_lab.py": "6b0fbe3a300166f47be5a105fae21792c9415596",
+    "lab/test_actuator_concurrency.py": "f6ac52098cd4e88525e323c42f34d59461a20f14",
+    "lab/test_actuator_lab.py": "1a621a1c4bcd79ab5132733a650a93b9bb0ce7be",
+    "lab/test_journal_lab.py": "a89d53658f33f364ff4fb77e79f4034a943ea3ba"
+  },
+  "scope": "Synthetic in-memory and SQLite state, spawned processes and abrupt process termination; no actual filesystem target actions",
+  "execution_authorization": "none"
+}

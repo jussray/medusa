@@ -50,5 +50,12 @@
     "status": "passed",
     "scope": "synthetic-only",
     "execution_enabled": false
+  },
+  "synthetic_journal_evidence": {
+    "receipt_path": "registry/evidence/l4-journal-474ed3e.json",
+    "verified_commit": "474ed3eb10d03c1b938048e579ef449eafd4bbb9",
+    "status": "passed",
+    "scope": "synthetic-only",
+    "execution_enabled": false
   }
 }
