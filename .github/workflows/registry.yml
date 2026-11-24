@@ -44,3 +44,7 @@ jobs:
       - name: Test synthetic Layer 4 model (no operational effects)
         working-directory: lab
         run: python3 -W error::ResourceWarning -m unittest -v test_actuator_lab test_actuator_concurrency test_journal_lab test_evidence_lab test_boundary_lab
+
+      - name: Test advisory identity and provider adapter (mock responses only)
+        working-directory: runtime
+        run: node --test runtime.test.mjs lane.test.mjs
