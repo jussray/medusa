@@ -1,0 +1,7 @@
+# Medusa Living Scene — canonical public candidate
+Canon SHA-256: e51d1e2ae2842e866ed660ce24f3fc24f7682ed0e6f58ff92e28db24d9ddc251
+Git blob: cd49561a9cb6e1457aa6211380e26f86f3d5b91b
+
+The exact founder-approved public HTML is preserved at canon/index.html. Run node build.mjs to produce public/index.html and public/app.js. The build adds one script tag; artwork, styles, navigation, audio and motion code are unchanged. Local evidence checking remains available. The optional server check requires explicit consent per request and returns metadata only, not source text or quotations. Audit export is in-session JSON, not a signed or persistent ledger. Only fictional or non-sensitive inputs should be used. Application code does not persist evidence; provider logging/retention settings are not verified.
+
+Run node build.mjs && node --test worker.test.mjs using Node 22. The Worker is configured for static assets with public preview URLs disabled. No Cloudflare account or production route has been changed. A provider-bound build, rate limits, logging/privacy review, authenticated tenant isolation, separate founder/customer OAuth clients, and actual provider execution must be verified before general production launch. Auth pages remain transparent placeholders; runtime adapters in ../runtime are not connected to this public endpoint. No operational security actions or network scanning are available.
