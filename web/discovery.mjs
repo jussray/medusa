@@ -1,0 +1,62 @@
+// Public discovery is deliberately distinct from the authenticated application.
+export const pages={
+ '/brand':['home','Medusa — Evidence review and decision assurance','Medusa helps teams examine evidence, identify weak assumptions and document the limits of verification.'],
+ '/overview':['method','The Medusa method — Detect, Review, Prove','Learn how Medusa separates assumptions, evidence and advisory findings.'],
+ '/evidence':['review','Evidence review — Medusa','Understand text integrity, SHA-256 digests and exact quotation matching.'],
+ '/threats':['threats','Threat review — Medusa','Learn about defensive review of assumptions, risks and evidence gaps.'],
+ '/audit':['audit','Audit trail — Medusa','Understand traceable review receipts, provenance and verification limits.'],
+ '/workspace':['workspace','Customer workspace — Medusa','Learn about isolated customer workspaces and account access.'],
+ '/faq':['faq','Questions about Medusa — FAQ','Answers about evidence review, account access, privacy and verification.'],
+ '/access':['access','Customer access — Medusa','Choose how to access a customer account.'],
+ '/auth/sign-in':['signin','Sign in — Medusa','Sign in to your customer workspace.'],
+ '/auth/sign-up':['signup','Create an account — Medusa','Create a customer account through the configured identity provider.']
+};
+export const searchable=Object.keys(pages).slice(0,7);
+const escape=s=>s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+const cta='<a class="btn primary" href="/auth/sign-up">Create Account</a> <a class="btn" href="/auth/sign-in">Sign In</a>';
+const section=(id,kicker,title,body)=>`<section class="page" hidden="" id="${id}"><div class="kicker">${kicker}</div><h1>${title}</h1>${body}<p>${cta}</p></section>`;
+const faqs=[['What is Medusa?','Medusa is an evidence-first review application for examining assumptions, checking text integrity and documenting advisory findings.'],['Does a matching digest establish truth?','No. A matching SHA-256 digest and exact quotation establish consistency with the supplied inputs, not independent truth or authorization.'],['Can I use the tools without an account?','No. Application tools, review receipts and customer workspaces require a valid customer session. Public pages explain the product only.'],['Does Medusa monitor networks or take automatic action?','No. This release does not provide live network monitoring or automatic operational action.'],['How is evidence handled?','The local check runs in the browser. Optional server checks require consent; saved receipts contain digest and result metadata rather than the original evidence text. Use non-sensitive evidence only.'],['Can I sign up today?','Customer sign-in and registration depend on the configured identity provider. Availability is shown on the customer access pages.']];
+const descriptions={
+ method:section('method','THE MEDUSA METHOD','Detect. Review. <em>Prove.</em>','<p>Medusa examines evidence before drawing a conclusion. Its method separates the review question, supporting evidence, uncertain assumptions and advisory findings.</p><div class="method-grid"><article class="method-card"><span class="num">01 / DETECT</span><h3>Find the weak assumption</h3><p>Identify gaps in the evidence and consider what would change a conclusion.</p><a href="/threats">About threat review →</a></article><article class="method-card"><span class="num">02 / REVIEW</span><h3>Inspect the evidence</h3><p>Compare submitted text and quotations against a supplied digest.</p><a href="/evidence">About evidence review →</a></article><article class="method-card"><span class="num">03 / PROVE</span><h3>Preserve the record</h3><p>Distinguish consistency checks from independently verified facts.</p><a href="/audit">About audit receipts →</a></article></div>'),
+ review:section('review','EVIDENCE REVIEW','Understand <em>evidence integrity.</em>','<p>Evidence integrity checks compare the SHA-256 digest of submitted text with an expected digest and test whether an exact quotation is present.</p><h2>What does a match prove?</h2><p>A match demonstrates consistency with those inputs only. It does not establish the source’s accuracy, provenance or independent truth. The review tool is available only after account authentication.</p>'),
+ threats:section('threats','DEFENSIVE REVIEW','Challenge the <em>assumptions.</em>','<p>Medusa’s review method examines assumptions, uncertainties, missing evidence and non-destructive mitigations. Findings are advisory, not permission to act.</p><h2>Is this live threat monitoring?</h2><p>No. This release does not scan networks, monitor live threats or take automated action.</p>'),
+ audit:section('audit','THE RECORD','Understand the <em>audit trail.</em>','<p>Review receipts record a digest, match outcomes and a check timestamp. The workspace is designed to separate customer records by account.</p><h2>What is preserved?</h2><p>Saved receipt metadata is not a signed proof of independent truth. Original evidence text and quotations are not stored in the receipt ledger.</p>'),
+ workspace:section('workspace','CUSTOMER WORKSPACE','Your <em>Workspace.</em>','<p>Customer workspaces are designed for isolated review records. Account authentication is required to access the application, its tools and saved receipts. Availability depends on the configured identity provider.</p>'),
+ faq:section('faq','ANSWERS','About <em>Medusa.</em>',faqs.map(([q,a])=>`<article class="method-card"><h2>${q}</h2><p>${a}</p></article>`).join(''))
+};
+export function publicTemplate(canon){
+ let html=canon.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'');
+ for(const [id,replacement] of Object.entries(descriptions)){if(id==='faq')continue;const re=new RegExp('<section\\b[^>]*id="'+id+'"[^>]*>[\\s\\S]*?<\\/section>');if(!re.test(html))throw Error('Missing canonical section '+id);html=html.replace(re,replacement)}
+ html=html.replace('</main>',descriptions.faq+'</main>');
+ const links={home:'/brand',method:'/overview',review:'/evidence',threats:'/threats',audit:'/audit',workspace:'/workspace',access:'/access',signin:'/auth/sign-in',signup:'/auth/sign-up'};
+ html=html.replace(/href="#(\w+)"/g,(all,id)=>links[id]?`href="${links[id]}"`:all);
+ html=html.replace('Check text integrity and exact quotations.','Learn about text integrity and quotation matching.').replace('Customer workspace concept and access.','Learn about account access.').replace('See Medusa in Action','Explore the Method').replace('Explore your evidence and review workspace.','Learn about customer workspace access.');
+ html=html.replace('Local interface preview · No live monitoring or automatic action','Account required for tools · No live monitoring or automatic action · <a href="/faq">FAQ</a>');
+ return html;
+}
+export function renderPublic(template,path,origin,configured=false){
+ const entry=pages[path];if(!entry)throw Error('Unknown public route');const [id,title,description]=entry;const index=searchable.includes(path),account=['access','signin','signup'].includes(id);
+ let html=template.replace(/<title>[^<]*<\/title>/,`<title>${escape(title)}</title>`).replace(/<meta content="[^"]*" name="description"\/>/,`<meta name="description" content="${escape(description)}"/>`);
+ html=html.replace('<body>',`<body data-route="${id}">`);
+ html=html.replace(/<section\b[^>]*id="([\w-]+)"[^>]*>[\s\S]*?<\/section>/g,(section,name)=>name===id||(account&&name==='home')?section.replace(' hidden=""',''):'');
+ if(account)html=html.replace('<div class="hero">','<div class="hero" hidden="">');
+ if(id==='signin'||id==='signup'){
+  const status=configured?'<p>Continue through the configured identity provider.</p><a class="btn primary" href="/auth/google/start">Continue with Google</a>':'<p class="notice">Customer access is not yet configured. No credentials are collected.</p>';
+  html=html.replace(new RegExp('(<section\\b[^>]*id="'+id+'"[^>]*>[\\s\\S]*?)<p class="notice">[\\s\\S]*?<\\/p>'),(m,prefix)=>prefix+status);
+ }
+ if(id==='access'&&configured)html=html.replace('Account authentication is not connected in this local preview. No credentials are collected.','Choose sign in or registration to continue through the configured identity provider.');
+ const url=origin+path;
+ const graph=[{'@type':'WebSite','@id':origin+'/brand#website',name:'Medusa',url:origin+'/brand'},{'@type':'WebApplication','@id':origin+'/brand#application',name:'Medusa',url:origin+'/brand',description:pages['/brand'][2],applicationCategory:'BusinessApplication',operatingSystem:'Web browser'},{'@type':'WebPage',name:title,url,description,isPartOf:{'@id':origin+'/brand#website'}}];
+ // Pricing is unspecified; do not claim offer or rich-result eligibility.
+ if(path==='/faq')graph.push({'@type':'FAQPage',mainEntity:faqs.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))});
+ const metadata=`<meta name="robots" content="${index?'index, follow, max-image-preview:large':'noindex, follow'}"><link rel="canonical" href="${escape(url)}"><meta property="og:type" content="website"><meta property="og:site_name" content="MEDUSA"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:url" content="${escape(url)}"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${escape(title)}"><meta name="twitter:description" content="${escape(description)}">${index?'<script type="application/ld+json">'+JSON.stringify({'@context':'https://schema.org','@graph':graph}).replaceAll('<','\\u003c')+'</script>':''}`;
+ return html.replace('</head>',metadata+'</head>').replace('</body>','<script src="/public-ui.js" defer></script></body>');
+}
+export function discovery(path,origin){
+ const blocked='Disallow: /app\nDisallow: /api/\nDisallow: /auth/\nDisallow: /founder\nDisallow: /index.html\nDisallow: /marketing.html\n';
+ if(path==='/robots.txt')return ['text/plain; charset=utf-8','User-agent: *\n'+blocked+'\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: Google-Extended\nDisallow: /\n\nUser-agent: ClaudeBot\nDisallow: /\n\nUser-agent: CCBot\nDisallow: /\n\nSitemap: '+origin+'/sitemap.xml\n'];
+ if(path==='/sitemap.xml')return ['application/xml; charset=utf-8','<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+searchable.map(p=>'<url><loc>'+escape(origin+p)+'</loc></url>').join('')+'</urlset>'];
+ if(path==='/llms.txt')return ['text/plain; charset=utf-8','# Medusa\n\n> Evidence-first review. Tools require an authenticated account. No live threat monitoring or operational actions.\n\n## Public pages\n'+searchable.map(p=>'- ['+pages[p][1]+']('+origin+p+'): '+pages[p][2]).join('\n')+'\n'];
+ if(path==='/crawlers.json')return ['application/json; charset=utf-8',JSON.stringify({policy:'Public search and citation welcome; model training and bulk harvesting not authorized. Private application resources require authentication.',public:searchable,training:['GPTBot','Google-Extended','ClaudeBot','CCBot'],robots:origin+'/robots.txt'},null,2)];
+ return null;
+}

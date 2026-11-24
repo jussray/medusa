@@ -44,6 +44,6 @@ export async function auth(request,env,network=fetch){
  const response=await network('https://oauth2.googleapis.com/token',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams({code,client_id:client,client_secret:secret,redirect_uri:callback,grant_type:'authorization_code',code_verifier:tx.verifier}).toString(),redirect:'error',signal:AbortSignal.timeout(10000)});if(!response.ok)throw Error();
  const sub=await verify((await response.json()).id_token,tx.nonce,client,network);const token=random(),customerId=await hash(issuer+'\n'+sub);const old=cookie(request,customerCookie);if(old)await db.prepare('UPDATE customer_sessions SET revoked=1 WHERE token_hash=?').bind(await hash(old)).run();
  await db.prepare('INSERT INTO customer_sessions(token_hash,customer_id,role,expires_at,revoked) VALUES (?,?,?,?,0)').bind(await hash(token),customerId,'customer',Date.now()+28800000).run();
- return redirect('/brand#workspace',303,[setCookie(customerCookie,token,28800),setCookie(oauthCookie,'',0)]);
+ return redirect('/app#workspace',303,[setCookie(customerCookie,token,28800),setCookie(oauthCookie,'',0)]);
  }catch{return json('SIGN_IN_NOT_CONFIRMED',400)}
 }

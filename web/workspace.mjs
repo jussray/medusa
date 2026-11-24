@@ -1,7 +1,7 @@
 const headers={'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer'};
 const json=(value,status=200)=>Response.json(value,{status,headers});
 const encoder=new TextEncoder();
-async function session(request,db){
+export async function session(request,db){
  const values=(request.headers.get('cookie')??'').split(';').map(s=>s.trim()).filter(s=>s.startsWith('__Host-medusa_customer='));
  if(values.length!==1)return null;
  const token=values[0].slice('__Host-medusa_customer='.length);

@@ -57,5 +57,14 @@
  }
  const section=document.getElementById('workspace');if(!section)return;
  const button=document.createElement('button');button.type='button';button.className='btn';button.textContent='Sign out';section.append(button);
- button.addEventListener('click',async()=>{try{const r=await fetch('/auth/customer/logout',{method:'POST',credentials:'same-origin'});if(!r.ok)throw Error();location.assign('/brand#signin');location.reload()}catch{button.textContent='Sign out not confirmed'}});
+ button.addEventListener('click',async()=>{try{const r=await fetch('/auth/customer/logout',{method:'POST',credentials:'same-origin'});if(!r.ok)throw Error();location.replace('/auth/sign-in')}catch{button.textContent='Sign out not confirmed'}});
+})();
+
+;addEventListener('pageshow',event=>{if(event.persisted)location.reload()});
+;(()=>{
+ const status=async()=>{try{const r=await fetch('/api/status',{credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(5000)});return r.ok&&(await r.json()).customerAuth===true}catch{return false}};
+ let replay=false,busy=false;
+ async function gate(event){if(replay)return;event.preventDefault();event.stopImmediatePropagation();if(busy)return;busy=true;try{if(!await status()){location.replace('/auth/sign-in');return}replay=true;if(event.type==='submit')event.target.requestSubmit();else event.target.click()}finally{replay=false;busy=false}}
+ document.getElementById('form')?.addEventListener('submit',gate,true);document.getElementById('sample')?.addEventListener('click',gate,true);
+ document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&!await status())location.replace('/auth/sign-in')});
 })();
