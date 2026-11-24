@@ -26,5 +26,16 @@ jobs:
           assert r["path"] == "medusa-v1_1-SKILL.md"
           data = Path(r["path"]).read_bytes()
           assert hashlib.sha1(("blob " + str(len(data)) + chr(0)).encode() + data).hexdigest() == r["source_blob"]
-          print("Registry metadata and skill blob verified; no skill executed.")
+          archives = g["archives"]
+          listed = {a["path"] for a in archives}
+          assert len(listed) == len(archives), "duplicate archive paths"
+          tracked = {p.decode("utf-8") for p in __import__("subprocess").check_output(["git", "ls-files", "-z"]).split(b"\x00") if p.endswith(b".zip")}
+          assert listed == tracked, "archive inventory coverage drift"
+          for a in archives:
+              path = Path(a["path"])
+              assert path.is_file() and not path.is_symlink()
+              data = path.read_bytes()
+              actual = hashlib.sha1(("blob " + str(len(data)) + chr(0)).encode() + data).hexdigest()
+              assert actual == a["git_blob"], "archive blob mismatch: " + a["path"]
+          print(f"Registry metadata, skill blob and {len(archives)} archive blobs verified; no archive extracted or skill executed.")
           PY

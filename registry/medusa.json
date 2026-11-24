@@ -20,5 +20,28 @@
     "contract_path": "docs/security-skill-handoff.md",
     "version": 1,
     "execution_enabled": false
-  }
+  },
+  "archives": [
+    {
+      "path": "Medusa_Full_Integration_Lab.zip",
+      "git_blob": "396d76c61d33425af4b06dd7b64ad12b87ceff99"
+    },
+    {
+      "path": "Medusa_Layer6_v3_Local_Review.zip",
+      "git_blob": "c7b3ae233ec32b83c272ddb3775b97c4044ea9ce"
+    },
+    {
+      "path": "medusa_online_preview.zip",
+      "git_blob": "061cf3158e941dbd40de7594d9a181a549841725"
+    },
+    {
+      "path": "medusa_skill_draft.zip",
+      "git_blob": "a2e1b109bf10b05fc520a29df795fc929b7a7fca"
+    },
+    {
+      "path": "medusa_skill_reconciled.zip",
+      "git_blob": "9047b102dd6085f6e3d5ae6689a99def84f337a9"
+    }
+  ],
+  "archive_verification_scope": "Git blob byte identity and inventory coverage only; contents, safety, provenance of creation and runtime behavior unverified"
 }
