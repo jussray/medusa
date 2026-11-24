@@ -64,5 +64,12 @@
     "status": "passed",
     "scope": "synthetic-only",
     "execution_enabled": false
+  },
+  "synthetic_boundary_evidence": {
+    "receipt_path": "registry/evidence/l4-boundary-a90295a.json",
+    "verified_commit": "a90295a2364287fac818aaf04cd5b52e94dfe2d5",
+    "status": "passed",
+    "scope": "synthetic-only",
+    "execution_enabled": false
   }
 }

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "repository": "jussray/medusa",
+  "verified_commit": "a90295a2364287fac818aaf04cd5b52e94dfe2d5",
+  "observed_on": "2026-11-24",
+  "source": "Exact-head GitHub check and job logs",
+  "evidence_url": "https://github.com/jussray/medusa/actions/runs/45351811479/job/138299827975",
+  "conclusion": "success",
+  "tests": {
+    "passed": 26,
+    "failed": 0
+  },
+  "archives_verified": 5,
+  "tested_blobs": {
+    "lab/actuator_lab.py": "8dc709335a5edaa06c6761f2491385111e6c3521",
+    "lab/evidence_lab.py": "6b19648428d6b32bfe52b283fd440e9f81601fde",
+    "lab/journal_lab.py": "6b0fbe3a300166f47be5a105fae21792c9415596",
+    "lab/test_actuator_concurrency.py": "f6ac52098cd4e88525e323c42f34d59461a20f14",
+    "lab/test_actuator_lab.py": "1a621a1c4bcd79ab5132733a650a93b9bb0ce7be",
+    "lab/test_boundary_lab.py": "219afa64c4f124ad1631898c4c9bbea16918866d",
+    "lab/test_evidence_lab.py": "c7dce4dd469278fea83fcc3d683016496e2e1288",
+    "lab/test_journal_lab.py": "a89d53658f33f364ff4fb77e79f4034a943ea3ba"
+  },
+  "scope": "Synthetic model, journal, signature review and temporary fixture non-modification tests",
+  "execution_authorization": "none",
+  "limitations": [
+    "No live containment or operational authorization",
+    "No independent real-world acceptance",
+    "No replacement of operational guard"
+  ]
+}
