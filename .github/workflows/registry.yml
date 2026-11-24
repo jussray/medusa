@@ -51,4 +51,4 @@ jobs:
 
       - name: Build exact Living Scene canon and test public review service
         working-directory: web
-        run: node build.mjs && node --check public/app.js && node --check public/public-ui.js && node --test worker.test.mjs workspace.test.mjs auth.test.mjs release-config.test.mjs atmosphere.test.mjs access.test.mjs smoke.test.mjs
+        run: node build.mjs && node --check public/app.js && node --check public/public-ui.js && node --test worker.test.mjs workspace.test.mjs auth.test.mjs release-config.test.mjs atmosphere.test.mjs access.test.mjs smoke.test.mjs storm.test.mjs
