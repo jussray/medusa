@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "skill": "medusa",
+  "repository": "jussray/medusa",
+  "registered_version": "1.1",
+  "execution_authorization": "none",
+  "records": [
+    {
+      "id": "MEDUSA-1.1",
+      "version": "1.1",
+      "path": "medusa-v1_1-SKILL.md",
+      "source_commit": "f3b770916750d8c79db2a5324b8412810c6a38bc",
+      "source_blob": "e83d073902930b68415561b6e9ffc953467a6506",
+      "original_created_at": null,
+      "observed_on": "2026-11-24",
+      "evidence": "OBSERVED repository definition; archive contents and runtime unverified"
+    }
+  ],
+  "manual_handoff": {
+    "contract_path": "docs/security-skill-handoff.md",
+    "version": 1,
+    "execution_enabled": false
+  }
+}

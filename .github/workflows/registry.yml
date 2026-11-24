@@ -1,0 +1,30 @@
+name: registry
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify archival registry (no skill execution)
+        run: |
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          g = json.loads(Path("registry/medusa.json").read_text())
+          assert g["skill"] == "medusa"
+          assert g["repository"] == "jussray/medusa"
+          assert g["execution_authorization"] == "none"
+          assert g["manual_handoff"]["execution_enabled"] is False
+          assert Path(g["manual_handoff"]["contract_path"]).is_file()
+          records = g["records"]
+          assert len({r["id"] for r in records}) == len(records)
+          r = next(r for r in records if r["id"] == "MEDUSA-1.1")
+          assert r["path"] == "medusa-v1_1-SKILL.md"
+          data = Path(r["path"]).read_bytes()
+          assert hashlib.sha1(("blob " + str(len(data)) + chr(0)).encode() + data).hexdigest() == r["source_blob"]
+          print("Registry metadata and skill blob verified; no skill executed.")
+          PY
