@@ -41,4 +41,4 @@ jobs:
           PY
       - name: Test synthetic Layer 4 model (no operational effects)
         working-directory: lab
-        run: python3 -m unittest -v test_actuator_lab test_actuator_concurrency
+        run: python3 -W error::ResourceWarning -m unittest -v test_actuator_lab test_actuator_concurrency test_journal_lab
