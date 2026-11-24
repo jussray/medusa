@@ -1,3 +1,4 @@
+import {workspace} from './workspace.mjs';
 const headers={'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','x-frame-options':'DENY','permissions-policy':'camera=(), microphone=(), geolocation=()'};
 const json=(value,status=200)=>Response.json(value,{status,headers});
 const maxBody=49152;
@@ -7,13 +8,13 @@ async function readBody(request){
  const reader=request.body.getReader();let bytes=0;const decoder=new TextDecoder('utf-8',{fatal:true});let text='';
  try{while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.length;if(bytes>maxBody){await reader.cancel();throw 413}text+=decoder.decode(value,{stream:true})}text+=decoder.decode();return JSON.parse(text)}catch(e){throw e===413?413:400}finally{reader.releaseLock()}
 }
-async function integrity(request){
+async function integrity(request,save=false){
  if(request.method!=='POST')return json({error:'METHOD_NOT_ALLOWED'},405);
  if(request.headers.get('origin')!==new URL(request.url).origin)return json({error:'ORIGIN_REQUIRED'},403);
  if(request.headers.get('content-type')?.split(';')[0].trim()!=='application/json')return json({error:'JSON_REQUIRED'},415);
  let data;try{data=await readBody(request)}catch(e){return json({error:e===413?'BODY_TOO_LARGE':'INVALID_JSON'},e===413?413:400)}
  const {source,expected,quote,consent}=data??{};const encoder=new TextEncoder();
- if(consent!==true||typeof source!=='string'||!source.trim()||encoder.encode(source).length>16384||typeof expected!=='string'||!/^[a-fA-F0-9]{64}$/.test(expected)||typeof quote!=='string'||quote.trim().length<12||encoder.encode(quote).length>1024)return json({error:'INVALID_INPUT'},400);
+ if((save&&data?.saveConsent!==true)||consent!==true||typeof source!=='string'||!source.trim()||encoder.encode(source).length>16384||typeof expected!=='string'||!/^[a-fA-F0-9]{64}$/.test(expected)||typeof quote!=='string'||quote.trim().length<12||encoder.encode(quote).length>1024)return json({error:'INVALID_INPUT'},400);
  const sha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',encoder.encode(source))),b=>b.toString(16).padStart(2,'0')).join('');
  const hashMatch=sha256===expected.toLowerCase(),quoteMatch=source.includes(quote);
  return json({schema:'medusa.integrity.v1',status:hashMatch&&quoteMatch?'MATCH':'MISMATCH',sha256,hashMatch,quoteMatch,authority:'NONE',independentTruthVerified:false,checkedAt:new Date().toISOString()});
@@ -22,6 +23,7 @@ const pages=new Map([['/','home'],['/brand','home'],['/overview','method'],['/ev
 export default {async fetch(request,env){
  const url=new URL(request.url),path=url.pathname;
  if(path==='/api/integrity')return integrity(request);
+ if(path==='/api/workspace'||path==='/api/workspace/receipts')return workspace(request,env,integrity);
  if(path==='/api/status'&&request.method==='GET')return json({integrity:true,customerAuth:false,aiRuntime:false,operationalActions:false});
  if(!['GET','HEAD'].includes(request.method))return json({error:'METHOD_NOT_ALLOWED'},405);
  if(pages.has(path)&&pages.get(path)!=='home')return new Response(null,{status:302,headers:{...headers,location:'/brand#'+pages.get(path)}});

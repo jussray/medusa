@@ -22,3 +22,30 @@
  });
  save.addEventListener('click',()=>{if(!receipt)return;const url=URL.createObjectURL(new Blob([JSON.stringify(receipt,null,2)+'\n'],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='medusa-integrity-receipt.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 })();
+;(()=>{
+ const section=document.getElementById('workspace'), form=document.getElementById('form');
+ if(!section||!form)return;
+ const panel=document.createElement('div');panel.className='notice';
+ const status=document.createElement('p');status.setAttribute('aria-live','polite');status.textContent='Checking workspace availability…';
+ const list=document.createElement('ol');const refresh=document.createElement('button');refresh.type='button';refresh.className='btn';refresh.textContent='Refresh receipts';
+ panel.append(status,refresh,list);section.append(panel);
+ const save=document.createElement('button');save.type='button';save.className='btn';save.textContent='Check and save to workspace';save.disabled=true;
+ const consent=document.createElement('input');consent.type='checkbox';consent.id='workspaceSaveConsent';
+ const label=document.createElement('label');label.htmlFor=consent.id;label.textContent='Send non-sensitive text for checking and save the resulting digest and receipt metadata to my account.';
+ const result=document.createElement('output');result.setAttribute('aria-live','polite');
+ const control=document.createElement('div');control.className='notice';control.append(consent,label,save,result);form.after(control);
+ let active=false,busy=false;const sync=()=>{save.disabled=!active||busy||!consent.checked};
+ async function load(){active=false;sync();list.replaceChildren();try{
+  const r=await fetch('/api/workspace',{credentials:'same-origin',cache:'no-store'});
+  if(r.status===401){status.textContent='Sign in with an enrolled customer account to view saved receipts.';return}
+  if(!r.ok)throw Error();const data=await r.json();if(!Array.isArray(data.receipts))throw Error();
+  active=true;status.textContent=data.receipts.length?'Saved receipts (latest 100).':'No saved receipts yet.';
+  for(const receipt of data.receipts){const li=document.createElement('li');li.textContent=`${receipt.checkedAt} · ${receipt.status} · ${receipt.sha256}`;list.append(li)}
+ }catch{status.textContent='Customer workspace is not available on this deployment.'}finally{sync()}}
+ refresh.addEventListener('click',load);consent.addEventListener('change',sync);
+ save.addEventListener('click',async()=>{if(!active||busy||!consent.checked)return;busy=true;sync();result.textContent='Checking…';try{
+  const r=await fetch('/api/workspace/receipts',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json','x-medusa-save-consent':'yes'},body:JSON.stringify({source:document.getElementById('source').value,expected:document.getElementById('expected').value,quote:document.getElementById('quote').value,consent:true,saveConsent:true})});
+  if(!r.ok)throw Error();const data=await r.json();if(!data.id||!['MATCH','MISMATCH'].includes(data.status))throw Error();result.textContent=`Saved receipt: ${data.status} · ${data.id}`;await load();
+ }catch{result.textContent='Save not confirmed.'}finally{busy=false;consent.checked=false;sync()}});
+ load();
+})();
