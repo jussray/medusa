@@ -43,5 +43,12 @@
       "git_blob": "9047b102dd6085f6e3d5ae6689a99def84f337a9"
     }
   ],
-  "archive_verification_scope": "Git blob byte identity and inventory coverage only; contents, safety, provenance of creation and runtime behavior unverified"
+  "archive_verification_scope": "Git blob byte identity and inventory coverage only; contents, safety, provenance of creation and runtime behavior unverified",
+  "synthetic_lab_evidence": {
+    "receipt_path": "registry/evidence/l4-synthetic-c3ae564.json",
+    "verified_commit": "c3ae564aa04a2507598ecab47dafb1acfba2732a",
+    "status": "passed",
+    "scope": "synthetic-only",
+    "execution_enabled": false
+  }
 }

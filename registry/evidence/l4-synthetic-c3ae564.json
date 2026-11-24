@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository": "jussray/medusa",
+  "verified_commit": "c3ae564aa04a2507598ecab47dafb1acfba2732a",
+  "scope": "Synthetic in-memory acceptance model only",
+  "source": "GitHub Actions job logs and exact-head check result",
+  "observed_on": "2026-11-24",
+  "run_id": 45336271551,
+  "job_id": 138248975779,
+  "evidence_url": "https://github.com/jussray/medusa/actions/runs/45336271551/job/138248975779",
+  "conclusion": "success",
+  "tests": {
+    "passed": 10,
+    "failed": 0
+  },
+  "archives_verified": 5,
+  "skill_integrity": "passed",
+  "tested_blobs": {
+    "lab/actuator_lab.py": "8dc709335a5edaa06c6761f2491385111e6c3521",
+    "lab/test_actuator_lab.py": "1a621a1c4bcd79ab5132733a650a93b9bb0ce7be",
+    "lab/test_actuator_concurrency.py": "f6ac52098cd4e88525e323c42f34d59461a20f14"
+  },
+  "limitations": [
+    "No actual filesystem actions",
+    "No process-level concurrency proof",
+    "No durable restart proof",
+    "No operational authorization"
+  ],
+  "execution_authorization": "none"
+}
