@@ -41,4 +41,4 @@ jobs:
           PY
       - name: Test synthetic Layer 4 model (no operational effects)
         working-directory: lab
-        run: python3 -m unittest -v test_actuator_lab
+        run: python3 -m unittest -v test_actuator_lab test_actuator_concurrency

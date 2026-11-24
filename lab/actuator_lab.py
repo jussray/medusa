@@ -37,6 +37,9 @@ class Lab:
                 raise LabError('CROSS_DEVICE_REFUSED')
             if crash not in (None, 'before', 'after'):
                 raise LabError('INVALID_CRASH_POINT')
+            if any(r['target'] == target and r['state'] in ('pending', 'escalated')
+                   for r in self._intents.values()):
+                raise LabError('UNRESOLVED_TARGET')
             if target not in self._available:
                 raise LabError('FIXTURE_UNAVAILABLE')
             self._intents[event] = {'state': 'pending', 'target': target}
