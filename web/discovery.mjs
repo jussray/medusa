@@ -1,3 +1,4 @@
+import {accountSection} from './onboarding.mjs';
 // Public discovery is deliberately distinct from the authenticated application.
 export const pages={
  '/brand':['home','Medusa — Evidence review and decision assurance','Medusa helps teams examine evidence, identify weak assumptions and document the limits of verification.'],
@@ -9,7 +10,8 @@ export const pages={
  '/faq':['faq','Questions about Medusa — FAQ','Answers about evidence review, account access, privacy and verification.'],
  '/access':['access','Customer access — Medusa','Choose how to access a customer account.'],
  '/auth/sign-in':['signin','Sign in — Medusa','Sign in to your customer workspace.'],
- '/auth/sign-up':['signup','Create an account — Medusa','Create a customer account through the configured identity provider.']
+ '/auth/sign-up':['signup','Create an account — Medusa','Create a customer account through the configured identity provider.'],
+ '/auth/verify-account':['signup','Verify your identity — Medusa','Verify your customer account through the configured identity provider.']
 };
 export const searchable=Object.keys(pages).slice(0,7);
 const escape=s=>s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
@@ -34,17 +36,12 @@ export function publicTemplate(canon){
  html=html.replace('Local interface preview · No live monitoring or automatic action','Account required for tools · No live monitoring or automatic action · <a href="/faq">FAQ</a>');
  return html;
 }
-export function renderPublic(template,path,origin,configured=false){
+export function renderPublic(template,path,origin,configured=false,verificationFailed=false){
  const entry=pages[path];if(!entry)throw Error('Unknown public route');const [id,title,description]=entry;const index=searchable.includes(path),account=['access','signin','signup'].includes(id);
  let html=template.replace(/<title>[^<]*<\/title>/,`<title>${escape(title)}</title>`).replace(/<meta content="[^"]*" name="description"\/>/,`<meta name="description" content="${escape(description)}"/>`);
  html=html.replace('<body>',`<body data-route="${id}">`);
- html=html.replace(/<section\b[^>]*id="([\w-]+)"[^>]*>[\s\S]*?<\/section>/g,(section,name)=>name===id||(account&&name==='home')?section.replace(' hidden=""',''):'');
- if(account)html=html.replace('<div class="hero">','<div class="hero" hidden="">');
- if(id==='signin'||id==='signup'){
-  const status=configured?'<p>Continue through the configured identity provider.</p><a class="btn primary" href="/auth/google/start">Continue with Google</a>':'<p class="notice">Customer access is not yet configured. No credentials are collected.</p>';
-  html=html.replace(new RegExp('(<section\\b[^>]*id="'+id+'"[^>]*>[\\s\\S]*?)<p class="notice">[\\s\\S]*?<\\/p>'),(m,prefix)=>prefix+status);
- }
- if(id==='access'&&configured)html=html.replace('Account authentication is not connected in this local preview. No credentials are collected.','Choose sign in or registration to continue through the configured identity provider.');
+ html=html.replace(/<section\b[^>]*id="([\w-]+)"[^>]*>[\s\S]*?<\/section>/g,(section,name)=>name===id?section.replace(' hidden=""',''):'');
+ if(account)html=html.replace(/<section\b[^>]*id="(?:access|signin|signup)"[^>]*>[\s\S]*?<\/section>/,()=>accountSection(path==='/auth/verify-account'?'verify':id,configured,verificationFailed));
  const url=origin+path;
  const graph=[{'@type':'WebSite','@id':origin+'/brand#website',name:'Medusa',url:origin+'/brand'},{'@type':'WebApplication','@id':origin+'/brand#application',name:'Medusa',url:origin+'/brand',description:pages['/brand'][2],applicationCategory:'BusinessApplication',operatingSystem:'Web browser'},{'@type':'WebPage',name:title,url,description,isPartOf:{'@id':origin+'/brand#website'}}];
  // Pricing is unspecified; do not claim offer or rich-result eligibility.

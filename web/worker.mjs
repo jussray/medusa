@@ -32,7 +32,7 @@ function pageResponse(body,request,privatePage=false,type='text/html; charset=ut
 async function assetText(env,request,path){if(!env?.ASSETS)throw Error('ASSETS_NOT_CONFIGURED');const url=new URL(request.url);url.pathname=path;url.search='';const response=await env.ASSETS.fetch(new Request(url));if(!response.ok)throw Error('ASSET_NOT_AVAILABLE');return response.text()}
 export default {async fetch(request,env){
  const url=new URL(request.url),path=url.pathname,origin=env?.MEDUSA_PUBLIC_ORIGIN||publicOrigin;
- if(['/auth/google/start','/auth/google/callback','/auth/customer/logout'].includes(path)){const r=await auth(request,env);const h=new Headers(r.headers);h.set('x-robots-tag',privateHeaders['x-robots-tag']);return new Response(r.body,{status:r.status,headers:h})}
+ if(['/auth/google/start','/auth/google/callback','/auth/customer/logout'].includes(path)){const r=await auth(request,env);if(path==='/auth/google/callback'&&r.status===400&&request.headers.get('accept')?.includes('text/html'))return redirect('/auth/sign-in?reason=verification',303);const h=new Headers(r.headers);h.set('x-robots-tag',privateHeaders['x-robots-tag']);return new Response(r.body,{status:r.status,headers:h})}
  if(path==='/api/integrity'){if(!await authorized(request,env))return json({error:'CUSTOMER_SESSION_REQUIRED'},401);return integrity(request)}
  if(path==='/api/workspace'||path==='/api/workspace/receipts'){const r=await workspace(request,env,integrity);const h=new Headers(r.headers);h.set('x-robots-tag',privateHeaders['x-robots-tag']);h.set('vary','Cookie');return new Response(r.body,{status:r.status,headers:h})}
  if(path==='/api/status'&&request.method==='GET'){const active=await authorized(request,env);return json({integrity:!!active,customerAuth:!!active,googleConfigured:googleConfigured(url,env),aiRuntime:false,operationalActions:false})}
@@ -45,7 +45,7 @@ export default {async fetch(request,env){
    return pageResponse(await assetText(env,request,path==='/app'?'/index.html':'/app.js'),request,true,path==='/app'?'text/html; charset=utf-8':'text/javascript; charset=utf-8');
   }
   if(path==='/public-ui.js')return pageResponse(await assetText(env,request,path),request,false,'text/javascript; charset=utf-8');
-  if(Object.hasOwn(pages,path))return pageResponse(renderPublic(await assetText(env,request,'/marketing.html'),path,origin,googleConfigured(url,env)),request,!searchable.includes(path));
+  if(Object.hasOwn(pages,path)){if(['/access','/auth/sign-in','/auth/sign-up','/auth/verify-account'].includes(path)&&await authorized(request,env))return redirect('/app#workspace');return pageResponse(renderPublic(await assetText(env,request,'/marketing.html'),path,origin,googleConfigured(url,env),url.searchParams.get('reason')==='verification'),request,!searchable.includes(path));}
   return json({error:'NOT_FOUND'},404);
  }catch{return json({error:'ASSET_UNAVAILABLE'},503)}
 }};

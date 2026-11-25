@@ -50,12 +50,11 @@
  load();
 })();
 ;(async()=>{
- try{const r=await fetch('/api/status',{cache:'no-store'});if(!r.ok||!(await r.json()).googleConfigured)return}catch{return}
- for(const id of ['signin','signup']){
-  const section=document.getElementById(id);if(!section)continue;
-  const link=document.createElement('a');link.href='/auth/google/start';link.className='btn primary';link.textContent='Continue with Google';section.append(link);
- }
+ try{const r=await fetch('/api/status',{cache:'no-store',credentials:'same-origin'});if(!r.ok||!(await r.json()).customerAuth){location.replace('/auth/sign-in');return}}catch{location.replace('/auth/sign-in');return}
  const section=document.getElementById('workspace');if(!section)return;
+ const intro=section.querySelector('p');if(intro)intro.textContent='Step 3 of 3 · Workspace ready. Your verified customer session is active. Begin an evidence review or view your saved receipts.';
+ for(const link of section.querySelectorAll('a[href="#signin"],a[href="#signup"]'))link.remove();
+ const start=document.createElement('a');start.className='btn primary';start.href='#review';start.textContent='Begin evidence review';section.append(start);
  const button=document.createElement('button');button.type='button';button.className='btn';button.textContent='Sign out';section.append(button);
  button.addEventListener('click',async()=>{try{const r=await fetch('/auth/customer/logout',{method:'POST',credentials:'same-origin'});if(!r.ok)throw Error();location.replace('/auth/sign-in')}catch{button.textContent='Sign out not confirmed'}});
 })();
