@@ -36,6 +36,7 @@ export async function auth(request,env,network=fetch){
   const state=random(),nonce=random(),verifier=random();await db.prepare('DELETE FROM customer_oauth_transactions WHERE expires_at<=?').bind(Date.now()).run();
   await db.prepare('INSERT INTO customer_oauth_transactions VALUES (?,?,?,?)').bind(state,nonce,verifier,Date.now()+300000).run();
   const params=new URLSearchParams({client_id:client,redirect_uri:callback,response_type:'code',scope:'openid',state,nonce,code_challenge:b64(await crypto.subtle.digest('SHA-256',encoder.encode(verifier))),code_challenge_method:'S256'});
+  if(url.searchParams.get('intent')==='signup')params.set('prompt','select_account');
   return redirect(issuer+'/o/oauth2/v2/auth?'+params,302,[setCookie(oauthCookie,state,300)]);
  }
  if(path!=='/auth/google/callback')return json('NOT_FOUND',404);

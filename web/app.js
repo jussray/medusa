@@ -56,6 +56,9 @@
   const link=document.createElement('a');link.href='/auth/google/start';link.className='btn primary';link.textContent='Continue with Google';section.append(link);
  }
  const section=document.getElementById('workspace');if(!section)return;
+ const intro=section.querySelector('p');if(intro)intro.textContent='Welcome to your private customer workspace. Start with fictional or non-sensitive evidence, review its consistency, and save a receipt only with your consent.';
+ for(const link of section.querySelectorAll('a[href="#signup"],a[href="#signin"]'))link.remove();
+ const first=document.createElement('a');first.href='#review';first.className='btn primary';first.textContent='Start your first evidence review';if(intro)intro.after(first);else section.append(first);
  const button=document.createElement('button');button.type='button';button.className='btn';button.textContent='Sign out';section.append(button);
  button.addEventListener('click',async()=>{try{const r=await fetch('/auth/customer/logout',{method:'POST',credentials:'same-origin'});if(!r.ok)throw Error();location.replace('/auth/sign-in')}catch{button.textContent='Sign out not confirmed'}});
 })();
